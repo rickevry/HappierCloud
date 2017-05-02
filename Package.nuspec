@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>Package</id>
-    <version>0.0.1-alpha</version>
-    <authors>Rickard Nilsson</authors>
+    <id>rickevry.HappierCloud</id>
+    <title>HappierCloud</title>
     <author>Rickard Nilsson</author>
+    <authors>Rickard Nilsson</authors>
     <owners>Rickard Nilsson</owners>
     <licenseUrl>https://opensource.org/licenses/MIT</licenseUrl>
     <projectUrl>https://github.com/rickevry/HappierCloud</projectUrl>
@@ -13,8 +13,5 @@
     <releaseNotes>First test version, do not use.</releaseNotes>
     <copyright>Copyright 2017</copyright>
     <tags>Azure Compute</tags>
-    <dependencies>
-      <dependency id="SampleDependency" version="1.0" />
-    </dependencies>
   </metadata>
 </package>

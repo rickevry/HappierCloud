@@ -142,6 +142,15 @@ namespace HappierCloud
             }
         }
 
+        public CloudQueue GetQueue(string queueName)
+        {
+            var connectionString = GetStringFromAnonymousType(this._settings, "connectionString");
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connectionString);
+            CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
+            CloudQueue queue = queueClient.GetQueueReference(queueName);  // "indesignqueue2"
+            return queue;
+        }
+
         public string CreateHashedFilename(string dataJson, string extension)
         {
             string filename = null;
