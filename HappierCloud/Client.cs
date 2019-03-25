@@ -14,24 +14,32 @@ namespace HappierCloud
 {
     public class Client
     {
-
-        dynamic _settings = null;
-
-        public Client(dynamic props)
+        public class ClientSettings
         {
-            this._settings = props;
+            public string Authority { get; set; }
+            public string ClientId { get; set; }
+            public string ClientSecret { get; set; }
+            public string BlobConnection { get; set; }
+            // public string BlobContainer { get; set; }
         }
 
-        private string GetStringFromAnonymousType(object dataitem, string itemkey)
+        ClientSettings _settings = null;
+
+        public Client(ClientSettings settings)
         {
-            System.Type type = dataitem.GetType();
-            object itemvalue = type.GetProperty(itemkey).GetValue(dataitem, null);
-            if (itemvalue != null)
-            {
-                return itemvalue.ToString();
-            }
-            return "";
+            this._settings = settings;
         }
+
+        //private string GetStringFromAnonymousType(object dataitem, string itemkey)
+        //{
+        //    System.Type type = dataitem.GetType();
+        //    object itemvalue = type.GetProperty(itemkey).GetValue(dataitem, null);
+        //    if (itemvalue != null)
+        //    {
+        //        return itemvalue.ToString();
+        //    }
+        //    return "";
+        //}
 
         private static bool needToStartServer(TokenCredentials credential,string groupName,string vmName, string subscriptionId)
         {
@@ -62,8 +70,7 @@ namespace HappierCloud
 
         public void StoreFile(string containerName, string filename, string sourceFileName)
         {
-            var connectionString = GetStringFromAnonymousType(this._settings, "blobConnection");
-            var storageAccount = CloudStorageAccount.Parse(connectionString);
+            var storageAccount = CloudStorageAccount.Parse(this._settings.BlobConnection);
             var blobClient = storageAccount.CreateCloudBlobClient();
             var container = blobClient.GetContainerReference(containerName);
 
@@ -89,12 +96,9 @@ namespace HappierCloud
 
         private AuthenticationResult GetAccessTokenAsync()
         {
-            var clientId = GetStringFromAnonymousType(this._settings, "clientId");
-            var clientSecret = GetStringFromAnonymousType(this._settings, "clientSecret");
-            var authority = GetStringFromAnonymousType(this._settings, "authority");
-            var cc = new ClientCredential(clientId, clientSecret);
+            var cc = new ClientCredential(this._settings.ClientId, this._settings.ClientSecret);
 
-            var context = new AuthenticationContext(authority);
+            var context = new AuthenticationContext(this._settings.Authority);
             var task = context.AcquireTokenAsync("https://management.azure.com/", cc);
             task.Wait();
             AuthenticationResult token = task.Result as AuthenticationResult;
@@ -107,8 +111,7 @@ namespace HappierCloud
 
         public void QueueMessage(string msg, string queueName)
         {
-            var connectionString = GetStringFromAnonymousType(this._settings, "blobConnection");
-            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connectionString);
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(this._settings.BlobConnection);
             CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
             CloudQueue queue = queueClient.GetQueueReference(queueName);
             queue.CreateIfNotExists();
@@ -118,8 +121,7 @@ namespace HappierCloud
 
         private byte[] LoadFile(string filename, string containerName)
         {
-            var connectionString = GetStringFromAnonymousType(this._settings, "blobConnection");
-            var storageAccount = CloudStorageAccount.Parse(connectionString);
+            var storageAccount = CloudStorageAccount.Parse(this._settings.BlobConnection);
             var blobClient = storageAccount.CreateCloudBlobClient();
             var container = blobClient.GetContainerReference(containerName);
 
@@ -138,8 +140,7 @@ namespace HappierCloud
 
         public CloudQueue GetQueue(string queueName)
         {
-            var connectionString = GetStringFromAnonymousType(this._settings, "blobConnection");
-            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connectionString);
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(this._settings.BlobConnection);
             CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
             CloudQueue queue = queueClient.GetQueueReference(queueName);  // "indesignqueue2"
             return queue;
@@ -159,8 +160,7 @@ namespace HappierCloud
 
         public bool BlobExists(string filename, string containerName)
         {
-            var connectionString = GetStringFromAnonymousType(this._settings, "blobConnection");
-            var storageAccount = CloudStorageAccount.Parse(connectionString);
+            var storageAccount = CloudStorageAccount.Parse(this._settings.BlobConnection);
             var blobClient = storageAccount.CreateCloudBlobClient();
             var container = blobClient.GetContainerReference(containerName);
 
